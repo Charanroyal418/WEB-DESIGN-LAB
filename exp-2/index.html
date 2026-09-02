@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechHire — Job Application</title>
+
+<!-- ═══════════════════════════════════════════
+     CSS — ALL STYLES IN ONE PLACE
+═══════════════════════════════════════════ -->
+<style>
+
+/* ── Reset ───────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+/* ── Tokens ──────────────────────────────── */
+:root {
+  --dark:    #1a1a2e;
+  --dark2:   #16213e;
+  --dark3:   #0f3460;
+  --gold:    #e8c547;
+  --gold2:   #f5d460;
+  --bg:      #f0f2f5;
+  --white:   #ffffff;
+  --text:    #333333;
+  --muted:   #777777;
+  --border:  #dddddd;
+  --success: #16a34a;
+  --danger:  #dc2626;
+  --r:       10px;
+}
+
+/* ── Body ────────────────────────────────── */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ════════════════════════════════════════════
+   NAVBAR
+════════════════════════════════════════════ */
+.navbar {
+  background: var(--dark);
+  height: 60px;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.nav-logo {
+  color: var(--gold);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+}
+
+.nav-links li button {
+  background: transparent;
+  border: none;
+  color: #bbb;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.nav-links li button:hover,
+.nav-links li button.active {
+  background: var(--gold);
+  color: var(--dark);
+  font-weight: 600;
+}
+
+/* ════════════════════════════════════════════
+   PAGES (shown/hidden via JS)
+════════════════════════════════════════════ */
+.page {
+  display: none;
+  max-width: 1100px;
+  margin: 36px auto;
+  padding: 0 20px 60px;
+  animation: fadeIn 0.3s ease;
+}
+
+.page.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════════════
+   PAGE HEADER
+════════════════════════════════════════════ */
+.page-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+
+.page-header p { color: var(--muted); }
+
+/* ════════════════════════════════════════════
+   HOME — HERO
+════════════════════════════════════════════ */
+.hero {
+  background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 50%, var(--dark3) 100%);
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+  border-radius: 14px;
+  margin-bottom: 36px;
+}
+
+.hero h1 { font-size: 2.6rem; color: var(--gold); margin-bottom: 12px; }
+.hero p  { font-size: 1.05rem; color: #ccc; margin-bottom: 28px; max-width: 480px; margin-inline: auto; }
+
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: var(--dark);
+  margin-right: 10px;
+}
+
+.btn-gold:hover {
+  background: var(--gold2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(232,197,71,0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+}
+
+.btn-outline:hover {
+  background: var(--gold);
+  color: var(--dark);
+  transform: translateY(-2px);
+}
+
+/* ════════════════════════════════════════════
+   STAT CARDS
+════════════════════════════════════════════ */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: var(--r);
+  padding: 22px 18px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  border-top: 4px solid var(--gold);
+  transition: transform 0.2s;
+}
+
+.card:hover { transform: translateY(-4px); }
+.card .c-icon  { font-size: 1.8rem; margin-bottom: 8px; }
+.card .c-num   { font-size: 2rem; font-weight: 700; color: var(--dark); line-height: 1; }
+.card .c-label { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+
+/* ════════════════════════════════════════════
+   JOB LISTINGS
+════════════════════════════════════════════ */
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 18px;
+  padding-bottom: 8px;
+  border-bottom: 3px solid var(--gold);
+  display: inline-block;
+}
+
+.job-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+  margin-bottom: 40px;
+}
+
+.job-card {
+  background: var(--white);
+  border-radius: var(--r);
+  padding: 22px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  border-left: 4px solid var(--dark3);
+  transition: all 0.2s;
+}
+
+.job-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.job-card h3   { font-size: 1.05rem; color: var(--dark); margin-bottom: 4px; }
+.job-card .dept { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+
+.tag {
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #eef2ff;
+  color: #4a6cf7;
+  font-weight: 500;
+}
+
+.tag.g { background: #edfaf1; color: #16a34a; }
+.tag.o { background: #fff4e5; color: #d97706; }
+.tag.r { background: #fef0f0; color: #dc2626; }
+
+/* ════════════════════════════════════════════
+   APPLY FORM
+════════════════════════════════════════════ */
+.form-card {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 40px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.fsec-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 18px;
+  margin-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--bg);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.fg {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.fg label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fg label span { color: var(--danger); }
+
+.fg input,
+.fg select,
+.fg textarea {
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.fg input:focus,
+.fg select:focus,
+.fg textarea:focus {
+  border-color: var(--dark);
+  box-shadow: 0 0 0 3px rgba(26,26,46,0.08);
+  background: white;
+}
+
+.fg textarea { resize: vertical; min-height: 90px; }
+
+/* Job type cards */
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 14px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fafafa;
+  text-align: center;
+  font-size: 0.8rem;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.type-card input { display: none; }
+.type-card .tc-icon { font-size: 1.3rem; }
+.type-card:hover { border-color: var(--dark); background: #f0f0ff; }
+.type-card.sel  { border-color: var(--gold); background: #fffbe6; font-weight: 600; color: var(--dark); }
+
+/* Skills checkboxes */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.sk-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fafafa;
+  font-size: 0.84rem;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.sk-item input { accent-color: var(--dark); width:14px; height:14px; cursor:pointer; }
+.sk-item:hover { border-color: var(--dark); background: #f0f0ff; }
+.sk-item.on    { border-color: var(--dark); background: #eef2ff; font-weight: 600; color: var(--dark); }
+
+.form-submit {
+  text-align: center;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 2px solid var(--bg);
+}
+
+.btn-submit {
+  background: var(--dark);
+  color: white;
+  padding: 13px 44px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s;
+  min-width: 200px;
+}
+
+.btn-submit:hover {
+  background: var(--dark3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26,26,46,0.3);
+}
+
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ════════════════════════════════════════════
+   ALERT MESSAGES
+════════════════════════════════════════════ */
+.alert {
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alert-success { background: #edfaf1; color: #166534; border: 1px solid #86efac; }
+.alert-error   { background: #fef0f0; color: #991b1b; border: 1px solid #fca5a5; }
+
+/* ════════════════════════════════════════════
+   APPLICATIONS TABLE PAGE
+════════════════════════════════════════════ */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  background: var(--white);
+  padding: 16px 18px;
+  border-radius: var(--r);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.toolbar input,
+.toolbar select {
+  padding: 9px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.toolbar input        { flex: 1; min-width: 200px; }
+.toolbar input:focus,
+.toolbar select:focus { border-color: var(--dark); }
+
+.btn-clr {
+  padding: 9px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: #fafafa;
+  color: var(--muted);
+  font-size: 0.86rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.btn-clr:hover { border-color: var(--dark); color: var(--dark); }
+
+/* Table */
+.tbl-wrap {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  overflow: hidden;
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+thead { background: var(--dark); }
+
+thead th {
+  padding: 14px 14px;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #ccc;
+  white-space: nowrap;
+}
+
+tbody tr {
+  border-bottom: 1px solid #f0f2f5;
+  transition: background 0.15s;
+}
+
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover      { background: #f8f9ff; }
+
+td {
+  padding: 13px 14px;
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
+/* Avatar */
+.av {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--dark);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nm-cell       { display: flex; align-items: center; gap: 10px; }
+.nm-cell .nm   { font-weight: 600; color: var(--dark); }
+.nm-cell .em   { font-size: 0.76rem; color: var(--muted); }
+
+/* Chip */
+.chip-list { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.chip {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #eef2ff;
+  color: #4a6cf7;
+  white-space: nowrap;
+}
+
+.chip.more { background: #f0f2f5; color: var(--muted); }
+
+/* Job type badge */
+.jbadge {
+  font-size: 0.74rem;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: #f0f2f5;
+  color: #555;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Status badge */
+.sbadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.s-Pending     { background:#fff4e5; color:#d97706; }
+.s-Reviewed    { background:#e6f4ff; color:#0369a1; }
+.s-Shortlisted { background:#f0ebff; color:#7c3aed; }
+.s-Interview   { background:#fff1eb; color:#ea580c; }
+.s-Rejected    { background:#fef0f0; color:#dc2626; }
+.s-Hired       { background:#edfaf1; color:#16a34a; }
+
+/* Status select inline */
+.st-sel {
+  font-size: 0.78rem;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fafafa;
+  cursor: pointer;
+  font-family: inherit;
+  margin-right: 6px;
+}
+
+/* Delete button */
+.btn-del {
+  background: #fef0f0;
+  color: var(--danger);
+  border: 1px solid #fca5a5;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.btn-del:hover { background: var(--danger); color: white; }
+
+/* Table footer */
+.tbl-footer {
+  padding: 12px 18px;
+  border-top: 1px solid #f0f2f5;
+  background: #fafafa;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--muted);
+}
+
+.empty .e-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+/* ════════════════════════════════════════════
+   TOAST NOTIFICATION
+════════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  padding: 11px 24px;
+  border-radius: 24px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  z-index: 9999;
+  white-space: nowrap;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+}
+
+#toast.show { transform: translateX(-50%) translateY(0); }
+#toast.ok   { background: #22c55e; color: white; }
+#toast.err  { background: #ef4444; color: white; }
+
+/* ════════════════════════════════════════════
+   LOADING SPINNER
+════════════════════════════════════════════ */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════ */
+footer {
+  text-align: center;
+  padding: 22px;
+  font-size: 0.84rem;
+  color: #aaa;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 40px;
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+@media (max-width: 700px) {
+  .navbar       { padding: 0 16px; }
+  .nav-logo     { font-size: 1.1rem; }
+  .hero h1      { font-size: 1.8rem; }
+  .form-card    { padding: 20px 14px; }
+  .form-row     { grid-template-columns: 1fr; }
+  .toolbar      { flex-direction: column; }
+  .toolbar input { width: 100%; }
+  .col-hide     { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+<nav class="navbar">
+  <div class="nav-logo" onclick="showPage('home')">⚡ TechHire</div>
+  <ul class="nav-links">
+    <li><button onclick="showPage('home')"         id="nav-home"  class="active">🏠 Home</button></li>
+    <li><button onclick="showPage('apply')"        id="nav-apply">📝 Apply Now</button></li>
+    <li><button onclick="showPage('applications')" id="nav-applications">📋 Applications</button></li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     PAGE 1 — HOME
+════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <h1>Find Your Dream Job</h1>
+    <p>We connect talented people with amazing companies. Apply today and start your journey.</p>
+    <button class="btn btn-gold"    onclick="showPage('apply')">Apply Now →</button>
+    <button class="btn btn-outline" onclick="showPage('applications')">View Applications</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="cards" id="home-stats">
+    <div class="card"><div class="c-icon">📋</div><div class="c-num" id="s-total">—</div><div class="c-label">Total Applications</div></div>
+    <div class="card"><div class="c-icon">⏳</div><div class="c-num" id="s-pending">—</div><div class="c-label">Pending</div></div>
+    <div class="card"><div class="c-icon">⭐</div><div class="c-num" id="s-shortlisted">—</div><div class="c-label">Shortlisted</div></div>
+    <div class="card"><div class="c-icon">✅</div><div class="c-num" id="s-hired">—</div><div class="c-label">Hired</div></div>
+  </div>
+
+  <!-- Job listings -->
+  <div class="section-title">Open Positions</div>
+  <div class="job-list" id="job-list"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 2 — APPLY FORM
+════════════════════════════════════════════ -->
+<div class="page" id="page-apply">
+  <div class="page-header">
+    <h1>Job Application Form</h1>
+    <p>Fill in all required fields marked with *</p>
+  </div>
+
+  <div id="apply-alert"></div>
+
+  <div class="form-card">
+    <form id="applyForm">
+
+      <!-- Personal Info -->
+      <div class="fsec-title">👤 Personal Information</div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Full Name <span>*</span></label>
+          <input type="text" name="full_name" placeholder="e.g. Priya Ramesh" required>
+        </div>
+        <div class="fg">
+          <label>Email Address <span>*</span></label>
+          <input type="email" name="email" placeholder="you@example.com" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Phone Number <span>*</span></label>
+          <input type="tel" name="phone" placeholder="9876543210" required>
+        </div>
+        <div class="fg">
+          <label>Years of Experience <span>*</span></label>
+          <select name="experience" required>
+            <option value="">— Select —</option>
+            <option>Fresher</option>
+            <option>1 Year</option>
+            <option>2 Years</option>
+            <option>3 Years</option>
+            <option>4 Years</option>
+            <option>5 Years</option>
+            <option>6+ Years</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Job Details -->
+      <div class="fsec-title">💼 Job Details</div>
+      <div class="fg">
+        <label>Position Applying For <span>*</span></label>
+        <select name="position" id="posSelect" required>
+          <option value="">— Select Position —</option>
+          <option>Frontend Developer</option>
+          <option>Backend Developer</option>
+          <option>UI/UX Designer</option>
+          <option>Data Analyst</option>
+          <option>DevOps Engineer</option>
+          <option>Mobile Developer</option>
+          <option>PHP Developer</option>
+          <option>ML Engineer</option>
+          <option>Product Manager</option>
+          <option>QA Engineer</option>
+        </select>
+      </div>
+
+      <!-- Job Type -->
+      <div class="fg">
+        <label>Job Type <span>*</span></label>
+        <div class="type-grid">
+          <label class="type-card" onclick="selType(this)">
+            <input type="radio" name="job_type" value="Full-Time" required>
+            <span class="tc-icon">🏢</span>
+            <strong>Full-Time</strong>
+            <span style="font-size:0.7rem;color:#888">Permanent</span>
+          </label>
+          <label class="type-card" onclick="selType(this)">
+            <input type="radio" name="job_type" value="Part-Time">
+            <span class="tc-icon">⏰</span>
+            <strong>Part-Time</strong>
+            <span style="font-size:0.7rem;color:#888">Flexible</span>
+          </label>
+          <label class="type-card" onclick="selType(this)">
+            <input type="radio" name="job_type" value="Remote">
+            <span class="tc-icon">🌍</span>
+            <strong>Remote</strong>
+            <span style="font-size:0.7rem;color:#888">Anywhere</span>
+          </label>
+          <label class="type-card" onclick="selType(this)">
+            <input type="radio" name="job_type" value="Contract">
+            <span class="tc-icon">📄</span>
+            <strong>Contract</strong>
+            <span style="font-size:0.7rem;color:#888">Fixed term</span>
+          </label>
+          <label class="type-card" onclick="selType(this)">
+            <input type="radio" name="job_type" value="Internship">
+            <span class="tc-icon">🎓</span>
+            <strong>Internship</strong>
+            <span style="font-size:0.7rem;color:#888">Learning</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="fsec-title">🛠️ Technical Skills</div>
+      <div class="fg">
+        <label>Select all skills that apply <span>*</span></label>
+        <div class="skills-grid" id="skillsGrid"></div>
+      </div>
+
+      <!-- Message -->
+      <div class="fsec-title">✉️ Cover Letter</div>
+      <div class="fg">
+        <label>Message / Cover Letter</label>
+        <textarea name="message" placeholder="Tell us why you're a great fit…"></textarea>
+      </div>
+
+      <!-- Submit -->
+      <div class="form-submit">
+        <button type="submit" class="btn-submit" id="submitBtn">
+          Submit Application →
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 3 — APPLICATIONS TABLE
+════════════════════════════════════════════ -->
+<div class="page" id="page-applications">
+  <div class="page-header">
+    <h1>All Applications</h1>
+    <p>View, filter, update and manage all job applications.</p>
+  </div>
+
+  <!-- Mini stats -->
+  <div class="cards" style="margin-bottom:24px" id="tbl-stats">
+    <div class="card"><div class="c-icon">📋</div><div class="c-num" id="ts-total">—</div><div class="c-label">Total</div></div>
+    <div class="card"><div class="c-icon">⏳</div><div class="c-num" id="ts-pending">—</div><div class="c-label">Pending</div></div>
+    <div class="card"><div class="c-icon">⭐</div><div class="c-num" id="ts-shortlisted">—</div><div class="c-label">Shortlisted</div></div>
+    <div class="card"><div class="c-icon">✅</div><div class="c-num" id="ts-hired">—</div><div class="c-label">Hired</div></div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <input type="text" id="tblSearch"  placeholder="🔍  Search name, email, position, skill…" oninput="loadTable()">
+    <select id="tblStatus" onchange="loadTable()">
+      <option value="">All Statuses</option>
+      <option>Pending</option><option>Reviewed</option><option>Shortlisted</option>
+      <option>Interview</option><option>Rejected</option><option>Hired</option>
+    </select>
+    <select id="tblType" onchange="loadTable()">
+      <option value="">All Job Types</option>
+      <option>Full-Time</option><option>Part-Time</option>
+      <option>Remote</option><option>Contract</option><option>Internship</option>
+    </select>
+    <button class="btn-clr" onclick="clearFilters()">✕ Clear</button>
+  </div>
+
+  <!-- Table -->
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Applicant</th>
+          <th class="col-hide">Position</th>
+          <th class="col-hide">Type</th>
+          <th class="col-hide">Experience</th>
+          <th class="col-hide">Skills</th>
+          <th class="col-hide">Applied</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="tblBody">
+        <tr><td colspan="9"><div class="empty"><div class="e-icon">⏳</div><p>Loading…</p></div></td></tr>
+      </tbody>
+    </table>
+    <div class="tbl-footer" id="tblFooter">Loading…</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer>
+  &copy; <span id="yr"></span> TechHire &nbsp;|&nbsp; Built with HTML, CSS, JavaScript &amp; PHP + MySQL
+</footer>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT — ALL FRONTEND LOGIC
+════════════════════════════════════════════ -->
+<script>
+
+/* ══════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════ */
+const API = 'api.php'; // backend file
+
+const SKILLS = [
+  'HTML','CSS','JavaScript','TypeScript',
+  'React','Vue','Angular','Node.js',
+  'PHP','Python','Java','C#',
+  'MySQL','PostgreSQL','MongoDB',
+  'AWS','Docker','Git',
+  'Figma','Photoshop','SQL','Linux',
+];
+
+const JOBS = [
+  { title:'Frontend Developer',  dept:'Engineering',    type:'Full-Time',  skills:'React, TypeScript, CSS' },
+  { title:'Backend Developer',   dept:'Engineering',    type:'Full-Time',  skills:'PHP, MySQL, Node.js' },
+  { title:'UI/UX Designer',      dept:'Design',         type:'Remote',     skills:'Figma, Photoshop, CSS' },
+  { title:'Data Analyst',        dept:'Analytics',      type:'Part-Time',  skills:'Python, SQL, Excel' },
+  { title:'DevOps Engineer',     dept:'Infrastructure', type:'Contract',   skills:'AWS, Docker, Git' },
+  { title:'Mobile Developer',    dept:'Engineering',    type:'Full-Time',  skills:'React Native, Java' },
+];
+
+const STATUS_ICON = {
+  Pending:'⏳', Reviewed:'👁', Shortlisted:'⭐',
+  Interview:'💬', Rejected:'✕', Hired:'✓'
+};
+
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+
+/* ══════════════════════════════════════════
+   PAGE NAVIGATION
+══════════════════════════════════════════ */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-'  + name).classList.add('active');
+  window.scrollTo(0, 0);
+
+  if (name === 'home')         { loadStats(); renderJobs(); }
+  if (name === 'applications') { loadStats(); loadTable(); }
+}
+
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+let toastTimer;
+function toast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 3000);
+}
+
+
+/* ══════════════════════════════════════════
+   HOME — STATS
+══════════════════════════════════════════ */
+async function loadStats() {
+  try {
+    const res  = await fetch(`${API}?action=stats`);
+    const data = await res.json();
+    if (!data.success) return;
+
+    const s = data.stats;
+
+    // Home page stats
+    setText('s-total',       s.total       ?? 0);
+    setText('s-pending',     s.Pending     ?? 0);
+    setText('s-shortlisted', s.Shortlisted ?? 0);
+    setText('s-hired',       s.Hired       ?? 0);
+
+    // Table page stats
+    setText('ts-total',       s.total       ?? 0);
+    setText('ts-pending',     s.Pending     ?? 0);
+    setText('ts-shortlisted', s.Shortlisted ?? 0);
+    setText('ts-hired',       s.Hired       ?? 0);
+  } catch (e) {
+    console.error('Stats error:', e);
+  }
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+
+/* ══════════════════════════════════════════
+   HOME — JOB LISTINGS
+══════════════════════════════════════════ */
+function renderJobs() {
+  const typeTag = { 'Full-Time':'', 'Remote':'g', 'Part-Time':'o', 'Contract':'r' };
+  const list    = document.getElementById('job-list');
+
+  list.innerHTML = JOBS.map(j => {
+    const tc = typeTag[j.type] || '';
+    const skTags = j.skills.split(',')
+                           .map(s => `<span class="tag">${s.trim()}</span>`)
+                           .join('');
+    return `
+      <div class="job-card">
+        <h3>${j.title}</h3>
+        <div class="dept">📁 ${j.dept}</div>
+        <div class="tags">
+          <span class="tag ${tc}">${j.type}</span>
+          ${skTags}
+        </div>
+        <button class="btn btn-gold"
+                style="font-size:0.84rem; padding:8px 18px"
+                onclick="applyFor('${j.title}')">
+          Apply →
+        </button>
+      </div>`;
+  }).join('');
+}
+
+function applyFor(pos) {
+  showPage('apply');
+  document.getElementById('posSelect').value = pos;
+}
+
+
+/* ══════════════════════════════════════════
+   APPLY — BUILD SKILLS CHECKBOXES
+══════════════════════════════════════════ */
+(function buildSkills() {
+  const grid = document.getElementById('skillsGrid');
+  grid.innerHTML = SKILLS.map(s => `
+    <label class="sk-item" id="sk-${s.replace(/[^a-z0-9]/gi,'_')}">
+      <input type="checkbox" name="skills[]" value="${s}"
+             onchange="this.closest('.sk-item').classList.toggle('on', this.checked)">
+      ${s}
+    </label>`).join('');
+})();
+
+
+/* ══════════════════════════════════════════
+   APPLY — JOB TYPE CARD SELECT
+══════════════════════════════════════════ */
+function selType(label) {
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('sel'));
+  // slight delay so the radio is checked first
+  setTimeout(() => label.classList.add('sel'), 10);
+}
+
+
+/* ══════════════════════════════════════════
+   APPLY — FORM SUBMIT
+══════════════════════════════════════════ */
+document.getElementById('applyForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const alertBox = document.getElementById('apply-alert');
+  const btn      = document.getElementById('submitBtn');
+
+  // Client-side: check at least one skill
+  const checkedSkills = this.querySelectorAll('input[name="skills[]"]:checked');
+  if (checkedSkills.length === 0) {
+    alertBox.innerHTML = `<div class="alert alert-error">❌ Please select at least one skill.</div>`;
+    alertBox.scrollIntoView({ behavior:'smooth' });
+    return;
+  }
+
+  // Disable button + show spinner
+  btn.disabled     = true;
+  btn.innerHTML    = '<span class="spinner"></span> Submitting…';
+  alertBox.innerHTML = '';
+
+  const fd = new FormData(this);
+  fd.append('action', 'submit');
+
+  try {
+    const res  = await fetch(API, { method:'POST', body: fd });
+    const data = await res.json();
+
+    if (data.success) {
+      alertBox.innerHTML = `
+        <div class="alert alert-success">
+          ✅ Application submitted! &nbsp;
+          Reference: <strong>${data.ref}</strong>
+        </div>`;
+      this.reset();
+      document.querySelectorAll('.sk-item').forEach(el => el.classList.remove('on'));
+      document.querySelectorAll('.type-card').forEach(el => el.classList.remove('sel'));
+      alertBox.scrollIntoView({ behavior:'smooth' });
+      toast('✓ Application submitted!', 'ok');
+    } else {
+      const msgs = data.errors || [data.message || 'Submission failed.'];
+      alertBox.innerHTML = `<div class="alert alert-error">❌ ${msgs.join('<br>')}</div>`;
+      alertBox.scrollIntoView({ behavior:'smooth' });
+    }
+  } catch (err) {
+    alertBox.innerHTML = `<div class="alert alert-error">❌ Network error. Please try again.</div>`;
+  }
+
+  btn.disabled  = false;
+  btn.innerHTML = 'Submit Application →';
+});
+
+
+/* ══════════════════════════════════════════
+   APPLICATIONS TABLE — LOAD
+══════════════════════════════════════════ */
+async function loadTable() {
+  const search = document.getElementById('tblSearch').value.trim();
+  const status = document.getElementById('tblStatus').value;
+  const jtype  = document.getElementById('tblType').value;
+
+  const params = new URLSearchParams({ action:'list', search, status, jtype });
+  const tbody  = document.getElementById('tblBody');
+
+  tbody.innerHTML = `<tr><td colspan="9">
+    <div class="empty"><div class="e-icon">⏳</div><p>Loading…</p></div>
+  </td></tr>`;
+
+  try {
+    const res  = await fetch(`${API}?${params}`);
+    const data = await res.json();
+
+    if (!data.success) {
+      tbody.innerHTML = `<tr><td colspan="9">
+        <div class="empty"><div class="e-icon">❌</div><p>Failed to load data.</p></div>
+      </td></tr>`;
+      return;
+    }
+
+    const rows = data.data;
+    document.getElementById('tblFooter').textContent =
+      `Showing ${rows.length} application(s)`;
+
+    if (rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9">
+        <div class="empty"><div class="e-icon">📭</div><p>No applications found.</p></div>
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows.map(r => {
+      const inits = r.full_name.split(' ')
+                               .map(p => p[0].toUpperCase())
+                               .slice(0,2).join('');
+      const sk    = r.skills.split(',').map(s => s.trim()).filter(Boolean);
+      const chips = sk.slice(0,3).map(s => `<span class="chip">${s}</span>`).join('') +
+                    (sk.length > 3 ? `<span class="chip more">+${sk.length - 3}</span>` : '');
+      const icon  = STATUS_ICON[r.status] || '⏳';
+      const date  = new Date(r.applied_at).toLocaleDateString('en-IN',
+                    { day:'2-digit', month:'short', year:'numeric' });
+
+      const statusOptions = ['Pending','Reviewed','Shortlisted','Interview','Rejected','Hired']
+        .map(s => `<option${s === r.status ? ' selected' : ''}>${s}</option>`)
+        .join('');
+
+      return `<tr id="row-${r.id}">
+        <td style="font-size:0.76rem;color:#aaa;font-family:monospace">
+          ${String(r.id).padStart(4,'0')}
+        </td>
+        <td>
+          <div class="nm-cell">
+            <div class="av">${inits}</div>
+            <div>
+              <div class="nm">${esc(r.full_name)}</div>
+              <div class="em">${esc(r.email)}</div>
+            </div>
+          </div>
+        </td>
+        <td class="col-hide">${esc(r.position)}</td>
+        <td class="col-hide"><span class="jbadge">${esc(r.job_type)}</span></td>
+        <td class="col-hide" style="font-size:0.82rem">${esc(r.experience)}</td>
+        <td class="col-hide"><div class="chip-list">${chips}</div></td>
+        <td class="col-hide" style="font-size:0.78rem;color:#888">${date}</td>
+        <td>
+          <select class="st-sel" onchange="updateStatus(${r.id}, this.value)">
+            ${statusOptions}
+          </select>
+          <span class="sbadge s-${r.status}">${icon} ${r.status}</span>
+        </td>
+        <td>
+          <button class="btn-del" onclick="deleteRow(${r.id}, '${esc(r.full_name)}')">
+            🗑 Delete
+          </button>
+        </td>
+      </tr>`;
+    }).join('');
+
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="9">
+      <div class="empty"><div class="e-icon">❌</div><p>Network error.</p></div>
+    </td></tr>`;
+  }
+}
+
+
+/* ══════════════════════════════════════════
+   TABLE — UPDATE STATUS
+══════════════════════════════════════════ */
+async function updateStatus(id, status) {
+  const fd = new FormData();
+  fd.append('action', 'update_status');
+  fd.append('id',     id);
+  fd.append('status', status);
+
+  try {
+    const res  = await fetch(API, { method:'POST', body: fd });
+    const data = await res.json();
+
+    if (data.success) {
+      toast(`✓ Status updated to ${status}`, 'ok');
+      // Update badge in the same row without full reload
+      const row    = document.getElementById(`row-${id}`);
+      const badge  = row.querySelector('.sbadge');
+      const icon   = STATUS_ICON[status] || '⏳';
+      badge.className = `sbadge s-${status}`;
+      badge.textContent = `${icon} ${status}`;
+    } else {
+      toast('✕ Update failed', 'err');
+    }
+  } catch (e) {
+    toast('✕ Network error', 'err');
+  }
+}
+
+
+/* ══════════════════════════════════════════
+   TABLE — DELETE ROW
+══════════════════════════════════════════ */
+async function deleteRow(id, name) {
+  if (!confirm(`Delete application from "${name}"? This cannot be undone.`)) return;
+
+  const fd = new FormData();
+  fd.append('action', 'delete');
+  fd.append('id',     id);
+
+  try {
+    const res  = await fetch(API, { method:'POST', body: fd });
+    const data = await res.json();
+
+    if (data.success) {
+      const row = document.getElementById(`row-${id}`);
+      if (row) {
+        row.style.transition = 'opacity 0.3s';
+        row.style.opacity    = '0';
+        setTimeout(() => { row.remove(); loadStats(); }, 300);
+      }
+      toast('✓ Application deleted', 'ok');
+    } else {
+      toast('✕ Delete failed', 'err');
+    }
+  } catch (e) {
+    toast('✕ Network error', 'err');
+  }
+}
+
+
+/* ══════════════════════════════════════════
+   TABLE — CLEAR FILTERS
+══════════════════════════════════════════ */
+function clearFilters() {
+  document.getElementById('tblSearch').value = '';
+  document.getElementById('tblStatus').value = '';
+  document.getElementById('tblType').value   = '';
+  loadTable();
+}
+
+
+/* ══════════════════════════════════════════
+   HELPER — ESCAPE HTML
+══════════════════════════════════════════ */
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+
+/* ══════════════════════════════════════════
+   INIT — LOAD HOME ON START
+══════════════════════════════════════════ */
+loadStats();
+renderJobs();
+
+</script>
+</body>
+</html>

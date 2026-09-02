@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fibonacci · 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ink:#0a0b14;
+  --void:#060710;
+  --glass:rgba(255,255,255,0.04);
+  --glass2:rgba(255,255,255,0.08);
+  --rim:rgba(255,255,255,0.1);
+  --rim2:rgba(255,255,255,0.18);
+  --violet:#7f6cf7;
+  --violet-d:#5a48e0;
+  --cyan:#2fe6c8;
+  --gold:#f5c842;
+  --text:#e8eaf6;
+  --muted:#6b7a99;
+  --shadow-deep:0 40px 80px rgba(0,0,0,0.8),0 8px 24px rgba(0,0,0,0.5);
+  --shadow-card:0 16px 48px rgba(0,0,0,0.6),0 4px 12px rgba(0,0,0,0.4);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--void);
+  color:var(--text);
+  font-family:'Space Grotesk',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  perspective:1200px;
+}
+
+/* ── SCENE BG ── */
+.scene-bg{
+  position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(127,108,247,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 70%, rgba(47,230,200,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(245,200,66,0.05) 0%, transparent 50%),
+    var(--void);
+  pointer-events:none;
+}
+
+/* grid lines */
+.scene-bg::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(127,108,247,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127,108,247,0.06) 1px, transparent 1px);
+  background-size:60px 60px;
+  transform:perspective(800px) rotateX(55deg) translateY(-10%) scale(2);
+  transform-origin:50% 0%;
+  mask-image:linear-gradient(to bottom, transparent 0%, black 40%, transparent 80%);
+  -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 40%, transparent 80%);
+}
+
+/* floating orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;animation:drift 12s ease-in-out infinite alternate;}
+.orb1{width:500px;height:500px;background:rgba(127,108,247,0.15);top:-100px;left:-100px;animation-duration:14s;}
+.orb2{width:400px;height:400px;background:rgba(47,230,200,0.1);bottom:-80px;right:-80px;animation-duration:18s;animation-delay:-6s;}
+.orb3{width:300px;height:300px;background:rgba(245,200,66,0.08);top:40%;left:40%;animation-duration:20s;animation-delay:-3s;}
+@keyframes drift{
+  0%{transform:translate(0,0) scale(1);}
+  100%{transform:translate(40px,30px) scale(1.1);}
+}
+
+/* ── LAYOUT ── */
+.wrapper{
+  position:relative;z-index:1;
+  max-width:1100px;margin:0 auto;
+  padding:80px 24px 120px;
+}
+
+/* ── HERO ── */
+.hero{
+  text-align:center;
+  margin-bottom:72px;
+  transform-style:preserve-3d;
+}
+
+.hero-label{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Space Mono',monospace;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--cyan);
+  background:rgba(47,230,200,0.07);
+  border:1px solid rgba(47,230,200,0.2);
+  border-radius:100px;padding:6px 16px;
+  margin-bottom:28px;
+  animation:fadeUp .6s ease both;
+}
+.hero-label::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(3rem,8vw,6.5rem);
+  font-weight:700;
+  line-height:1.05;
+  letter-spacing:-.03em;
+  animation:fadeUp .7s .1s ease both;
+}
+h1 .line1{
+  display:block;
+  background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.7) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+h1 .line2{
+  display:block;
+  background:linear-gradient(135deg,var(--violet) 0%,var(--cyan) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.hero-sub{
+  margin-top:20px;font-size:1.1rem;
+  color:var(--muted);font-weight:300;
+  max-width:480px;margin-left:auto;margin-right:auto;
+  animation:fadeUp .7s .2s ease both;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(24px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* floating numbers decoration */
+.deco-nums{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:900px;pointer-events:none;height:300px;
+  overflow:hidden;
+}
+.deco-num{
+  position:absolute;
+  font-family:'Space Mono',monospace;
+  font-weight:700;
+  color:rgba(127,108,247,0.07);
+  animation:floatNum 8s ease-in-out infinite alternate;
+  user-select:none;
+}
+@keyframes floatNum{
+  from{transform:translateY(0) rotate(-5deg);}
+  to{transform:translateY(-20px) rotate(5deg);}
+}
+
+/* ── 3D CONTROL PANEL ── */
+.panel-3d{
+  position:relative;
+  transform-style:preserve-3d;
+  animation:fadeUp .8s .3s ease both;
+  margin-bottom:56px;
+}
+
+.panel-inner{
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--rim);
+  border-radius:24px;
+  padding:36px 40px;
+  box-shadow:var(--shadow-deep),inset 0 1px 0 var(--rim2),inset 0 -1px 0 rgba(0,0,0,0.3);
+  position:relative;overflow:hidden;
+}
+
+/* 3d depth side */
+.panel-inner::before{
+  content:'';
+  position:absolute;
+  left:-2px;bottom:-4px;top:4px;
+  width:100%;
+  background:linear-gradient(135deg,rgba(127,108,247,0.15),rgba(47,230,200,0.1));
+  border-radius:24px;
+  z-index:-1;
+  transform:translateZ(-20px);
+  filter:blur(2px);
+}
+
+/* shimmer line */
+.panel-inner::after{
+  content:'';
+  position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent);
+  animation:shimmer 4s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes shimmer{
+  0%{left:-60%;}100%{left:120%;}
+}
+
+.controls-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr auto auto;
+  gap:20px;
+  align-items:end;
+}
+@media(max-width:700px){
+  .controls-grid{grid-template-columns:1fr 1fr;gap:14px;}
+  .btn-generate,.btn-reset{grid-column:span 1;}
+}
+
+.field{display:flex;flex-direction:column;gap:8px;}
+.field label{
+  font-size:11px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* 3D input */
+input[type="number"]{
+  background:rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.1);
+  border-bottom:2px solid var(--violet);
+  border-radius:12px 12px 8px 8px;
+  color:var(--text);
+  font-family:'Space Mono',monospace;
+  font-size:1.1rem;font-weight:700;
+  padding:12px 16px;
+  outline:none;
+  transition:all .2s;
+  box-shadow:inset 0 -4px 12px rgba(127,108,247,0.1),0 4px 12px rgba(0,0,0,0.3);
+  width:100%;
+}
+input[type="number"]:focus{
+  border-color:var(--violet);
+  border-bottom-color:var(--cyan);
+  box-shadow:inset 0 -4px 12px rgba(47,230,200,0.15),0 0 0 3px rgba(127,108,247,0.15),0 4px 12px rgba(0,0,0,0.3);
+}
+input[type="number"]::-webkit-inner-spin-button{opacity:.4;}
+
+/* speed slider */
+.speed-wrap{
+  display:flex;flex-direction:column;gap:8px;
+}
+.speed-label-row{
+  display:flex;justify-content:space-between;align-items:center;
+}
+.speed-label-row span{
+  font-family:'Space Mono',monospace;
+  font-size:12px;color:var(--violet);
+}
+input[type="range"]{
+  -webkit-appearance:none;width:100%;height:4px;
+  background:linear-gradient(90deg,var(--violet),var(--cyan));
+  border-radius:2px;outline:none;cursor:pointer;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--ink);
+  border:3px solid var(--violet);
+  box-shadow:0 0 12px rgba(127,108,247,0.6);
+  transition:box-shadow .2s;
+  cursor:grab;
+}
+input[type="range"]::-webkit-slider-thumb:active{
+  cursor:grabbing;
+  box-shadow:0 0 20px rgba(127,108,247,0.9);
+}
+
+/* 3D Buttons */
+.btn{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.9rem;font-weight:700;
+  letter-spacing:.03em;
+  border:none;border-radius:14px;
+  padding:14px 28px;
+  cursor:pointer;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .15s,box-shadow .15s;
+  white-space:nowrap;
+}
+.btn:active{transform:translateY(2px) translateZ(-2px);}
+.btn-generate{
+  background:linear-gradient(135deg,var(--violet),var(--violet-d));
+  color:#fff;
+  box-shadow:0 6px 0 rgba(90,72,224,0.8),0 8px 24px rgba(127,108,247,0.4);
+}
+.btn-generate:hover:not(:disabled){
+  transform:translateY(-2px);
+  box-shadow:0 8px 0 rgba(90,72,224,0.8),0 16px 32px rgba(127,108,247,0.5);
+}
+.btn-generate::before{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(to bottom,rgba(255,255,255,0.15),transparent);
+}
+.btn-reset{
+  background:transparent;
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:0 4px 0 rgba(0,0,0,0.4),0 4px 12px rgba(0,0,0,0.3);
+}
+.btn-reset:hover{color:var(--text);border-color:var(--rim2);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* ── STATUS ── */
+.status-row{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;
+  padding:0 4px;
+  animation:fadeUp .8s .4s ease both;
+}
+.status-pill{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Space Mono',monospace;font-size:12px;
+  color:var(--cyan);
+  background:rgba(47,230,200,0.06);
+  border:1px solid rgba(47,230,200,0.15);
+  border-radius:100px;padding:6px 14px;
+}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan);
+  flex-shrink:0;
+}
+.status-dot.pulse{animation:pulseGlow 1s ease-in-out infinite;}
+@keyframes pulseGlow{
+  0%,100%{box-shadow:0 0 4px var(--cyan);}
+  50%{box-shadow:0 0 16px var(--cyan),0 0 24px rgba(47,230,200,0.4);}
+}
+.counter-badge{
+  font-family:'Space Mono',monospace;font-size:12px;
+  color:var(--muted);
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--rim);
+  border-radius:8px;padding:6px 14px;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap{
+  height:3px;background:rgba(255,255,255,0.06);
+  border-radius:2px;margin-bottom:40px;overflow:hidden;
+  animation:fadeUp .8s .45s ease both;
+}
+#progress-bar{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--violet),var(--cyan));
+  border-radius:2px;
+  transition:width .3s ease;
+  box-shadow:0 0 12px rgba(47,230,200,0.5);
+}
+
+/* ── FIBONACCI GRID ── */
+#fib-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:14px;
+  animation:fadeUp .8s .5s ease both;
+}
+
+/* ── 3D CARD ── */
+.fib-card{
+  position:relative;
+  transform-style:preserve-3d;
+  transform:perspective(600px) rotateX(25deg) rotateY(-15deg) scale(0.7);
+  opacity:0;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  cursor:default;
+}
+.fib-card.visible{
+  animation:card3dIn .5s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes card3dIn{
+  0%{opacity:0;transform:perspective(600px) rotateX(25deg) rotateY(-15deg) scale(0.7) translateY(20px);}
+  100%{opacity:1;transform:perspective(600px) rotateX(0deg) rotateY(0deg) scale(1) translateY(0);}
+}
+.fib-card:hover .card-face{
+  transform:translateZ(8px);
+  box-shadow:0 24px 60px rgba(0,0,0,0.7),0 0 30px rgba(127,108,247,0.25),inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.fib-card:hover .card-shadow{
+  transform:translateY(12px) scaleX(0.9);
+  opacity:.6;
+}
+
+/* card face */
+.card-face{
+  background:var(--glass2);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--rim);
+  border-top:1px solid rgba(255,255,255,0.18);
+  border-radius:16px;
+  padding:18px 14px 14px;
+  text-align:center;
+  transition:all .3s;
+  box-shadow:var(--shadow-card),inset 0 1px 0 rgba(255,255,255,0.12);
+  position:relative;overflow:hidden;
+}
+
+/* inner glow top */
+.card-face::before{
+  content:'';position:absolute;
+  top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+}
+
+/* card 3d base shadow */
+.card-shadow{
+  position:absolute;bottom:-10px;left:10%;right:10%;
+  height:20px;
+  background:rgba(0,0,0,0.5);
+  filter:blur(12px);
+  border-radius:50%;
+  transition:all .3s;
+  z-index:-1;
+}
+
+.card-face.golden{
+  border-color:rgba(245,200,66,0.3);
+  border-top-color:rgba(245,200,66,0.5);
+}
+.card-face.golden::after{
+  content:'';position:absolute;inset:0;border-radius:16px;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(245,200,66,0.08),transparent);
+  pointer-events:none;
+}
+
+.card-idx{
+  font-family:'Space Mono',monospace;
+  font-size:10px;color:var(--muted);
+  margin-bottom:8px;letter-spacing:.06em;
+}
+.card-value{
+  font-family:'Space Mono',monospace;
+  font-size:clamp(.7rem,1.8vw,1rem);
+  font-weight:700;
+  color:var(--violet);
+  word-break:break-all;
+  line-height:1.3;
+  text-shadow:0 0 20px rgba(127,108,247,0.5);
+}
+.card-face.golden .card-value{
+  color:var(--gold);
+  text-shadow:0 0 20px rgba(245,200,66,0.5);
+}
+.card-ratio{
+  font-size:9px;color:var(--muted);
+  font-family:'Space Mono',monospace;
+  margin-top:8px;
+  padding-top:7px;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+
+/* latest ring */
+.fib-card.latest .card-face::after{
+  content:'';position:absolute;inset:-1px;border-radius:16px;
+  border:2px solid var(--violet);
+  animation:latestRing .8s ease-out forwards;
+  pointer-events:none;
+  z-index:2;
+}
+@keyframes latestRing{
+  0%{opacity:1;transform:scale(1);}
+  100%{opacity:0;transform:scale(1.08);}
+}
+
+/* ── φ DISPLAY ── */
+.phi-section{
+  margin-top:56px;
+  display:flex;justify-content:center;
+  animation:fadeUp .8s .6s ease both;
+}
+.phi-card{
+  background:var(--glass);
+  border:1px solid var(--rim);
+  border-radius:20px;
+  padding:28px 48px;
+  text-align:center;
+  box-shadow:var(--shadow-card),inset 0 1px 0 var(--rim2);
+  position:relative;overflow:hidden;
+  max-width:520px;width:100%;
+}
+.phi-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(245,200,66,0.06),transparent);
+  pointer-events:none;
+}
+.phi-label{
+  font-family:'Space Mono',monospace;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:12px;
+}
+.phi-value{
+  font-family:'Space Mono',monospace;
+  font-size:2.2rem;font-weight:700;
+  color:var(--gold);
+  text-shadow:0 0 30px rgba(245,200,66,0.4);
+  letter-spacing:.04em;
+}
+.phi-desc{
+  margin-top:10px;font-size:13px;
+  color:var(--muted);font-weight:300;
+}
+
+/* ── STATS ROW ── */
+.stats-row{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:14px;margin-top:20px;
+}
+@media(max-width:500px){.stats-row{grid-template-columns:1fr;}}
+.stat-card{
+  background:var(--glass);
+  border:1px solid var(--rim);
+  border-radius:14px;padding:16px;
+  text-align:center;
+  box-shadow:0 4px 16px rgba(0,0,0,0.3);
+}
+.stat-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.stat-value{font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--text);}
+
+/* reduced motion */
+@media(prefers-reduced-motion:reduce){
+  .fib-card,.fib-card.visible,.orb,
+  .fib-card.latest .card-face::after{
+    animation:none;opacity:1;transform:none;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- scene -->
+<div class="scene-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="wrapper">
+
+  <!-- hero -->
+  <div class="hero" style="position:relative;">
+    <!-- floating deco numbers -->
+    <div class="deco-nums" aria-hidden="true">
+      <span class="deco-num" style="font-size:120px;top:-20px;left:5%;animation-delay:0s">0</span>
+      <span class="deco-num" style="font-size:80px;top:40px;left:22%;animation-delay:-2s">1</span>
+      <span class="deco-num" style="font-size:100px;top:10px;right:18%;animation-delay:-1s">1</span>
+      <span class="deco-num" style="font-size:70px;top:60px;right:4%;animation-delay:-3s">2</span>
+      <span class="deco-num" style="font-size:90px;top:80px;left:42%;animation-delay:-4s">3</span>
+    </div>
+
+    <div class="hero-label">Mathematical sequence</div>
+    <h1>
+      <span class="line1">Fibonacci</span>
+      <span class="line2">number checker</span>
+    </h1>
+    <p class="hero-sub">Each number is the sum of the two before it. Watch the golden ratio emerge in real time.</p>
+  </div>
+
+  <!-- control panel -->
+  <div class="panel-3d">
+    <div class="panel-inner">
+      <div class="controls-grid">
+        <div class="field">
+          <label for="inp-count">Terms</label>
+          <input type="number" id="inp-count" min="1" max="60" value="18"/>
+        </div>
+        <div class="speed-wrap" style="grid-column:span 2;">
+          <div class="speed-label-row">
+            <label style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Speed</label>
+            <span id="spd-val">300ms</span>
+          </div>
+          <input type="range" id="inp-speed" min="50" max="1000" value="300" step="50"/>
+        </div>
+        <button class="btn btn-generate" id="btn-go">▶ Generate</button>
+        <button class="btn btn-reset" id="btn-rst">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- status -->
+  <div class="status-row">
+    <div class="status-pill">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-txt">Ready</span>
+    </div>
+    <div class="counter-badge" id="counter">0 / 0</div>
+  </div>
+
+  <!-- progress -->
+  <div class="progress-wrap">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- grid -->
+  <div id="fib-grid"></div>
+
+  <!-- stats row -->
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Largest value</div>
+      <div class="stat-value" id="stat-max">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sum of all</div>
+      <div class="stat-value" id="stat-sum">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">φ converges at</div>
+      <div class="stat-value" id="stat-phi">—</div>
+    </div>
+  </div>
+
+  <!-- phi display -->
+  <div class="phi-section">
+    <div class="phi-card">
+      <div class="phi-label">Golden Ratio φ</div>
+      <div class="phi-value" id="phi-val">1.618033…</div>
+      <div class="phi-desc" id="phi-desc">Generate the sequence to see φ emerge</div>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+const grid     = document.getElementById('fib-grid');
+const btnGo    = document.getElementById('btn-go');
+const btnRst   = document.getElementById('btn-rst');
+const inpCount = document.getElementById('inp-count');
+const inpSpeed = document.getElementById('inp-speed');
+const spdVal   = document.getElementById('spd-val');
+const statusTxt= document.getElementById('status-txt');
+const statusDot= document.getElementById('status-dot');
+const counter  = document.getElementById('counter');
+const progBar  = document.getElementById('progress-bar');
+const phiVal   = document.getElementById('phi-val');
+const phiDesc  = document.getElementById('phi-desc');
+const statMax  = document.getElementById('stat-max');
+const statSum  = document.getElementById('stat-sum');
+const statPhi  = document.getElementById('stat-phi');
+
+let timer = null, step = 0, total = 0, seq = [];
+
+inpSpeed.addEventListener('input', () => spdVal.textContent = inpSpeed.value + 'ms');
+btnGo.addEventListener('click', start);
+btnRst.addEventListener('click', reset);
+
+/* 3D tilt on cards */
+document.addEventListener('mousemove', e => {
+  document.querySelectorAll('.fib-card.visible').forEach(card => {
+    const r = card.getBoundingClientRect();
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    const dx = (e.clientX - cx) / (window.innerWidth/2);
+    const dy = (e.clientY - cy) / (window.innerHeight/2);
+    const tiltX = dy * -8, tiltY = dx * 8;
+    card.querySelector('.card-face').style.transform =
+      `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(6px)`;
+  });
+});
+document.addEventListener('mouseleave', () => {
+  document.querySelectorAll('.card-face').forEach(f => f.style.transform = '');
+});
+
+function fibonacci(n){
+  const s = [];
+  for(let i=0;i<n;i++){
+    if(i===0) s.push(0n);
+    else if(i===1) s.push(1n);
+    else s.push(s[i-1]+s[i-2]);
+  }
+  return s;
+}
+
+function fmtBig(n){
+  const s = n.toString();
+  if(s.length <= 15) return s;
+  return s.slice(0,6)+'…'+s.slice(-4);
+}
+
+function start(){
+  if(timer) return;
+  const n = Math.min(Math.max(parseInt(inpCount.value)||10,1),60);
+  inpCount.value = n;
+  total = n; step = 0;
+  seq = fibonacci(n);
+  grid.innerHTML='';
+  progBar.style.width='0%';
+  phiVal.textContent='1.618033…';
+  phiDesc.textContent='Sequence running…';
+  statMax.textContent='—'; statSum.textContent='—'; statPhi.textContent='—';
+  statusTxt.textContent='Generating…';
+  statusDot.classList.add('pulse');
+  btnGo.disabled=true;
+
+  const delay = parseInt(inpSpeed.value);
+  timer = setInterval(()=>{
+    if(step>=total){ finish(); return; }
+
+    const prev = grid.querySelector('.latest');
+    if(prev) prev.classList.remove('latest');
+
+    const val   = seq[step];
+    const prev1 = step>0 ? seq[step-1] : null;
+    const ratio = (step>1 && prev1 && prev1!==0n)
+      ? (Number(val)/Number(prev1)).toFixed(8) : null;
+    const golden = step > 5;
+
+    const card = document.createElement('div');
+    card.className = 'fib-card latest';
+
+    const face = document.createElement('div');
+    face.className = 'card-face' + (golden?' golden':'');
+
+    face.innerHTML = `
+      <div class="card-idx">F(${step})</div>
+      <div class="card-value">${fmtBig(val)}</div>
+      ${ratio ? `<div class="card-ratio">φ≈${ratio}</div>` : '<div class="card-ratio"> </div>'}
+    `;
+
+    const shadow = document.createElement('div');
+    shadow.className = 'card-shadow';
+
+    card.appendChild(face);
+    card.appendChild(shadow);
+    grid.appendChild(card);
+
+    requestAnimationFrame(()=>requestAnimationFrame(()=>card.classList.add('visible')));
+
+    if(ratio){
+      phiVal.textContent = ratio;
+      phiDesc.textContent = `After F(${step}), ratio → φ`;
+    }
+
+    counter.textContent = `${step+1} / ${total}`;
+    progBar.style.width = ((step+1)/total*100).toFixed(1)+'%';
+    step++;
+  }, delay);
+}
+
+function finish(){
+  clearInterval(timer); timer=null;
+  statusTxt.textContent='Complete ✓';
+  statusDot.classList.remove('pulse');
+  btnGo.disabled=false;
+  progBar.style.width='100%';
+
+  if(seq.length){
+    const last = seq[seq.length-1];
+    statMax.textContent = fmtBig(last);
+    let sum = seq.reduce((a,b)=>a+b,0n);
+    statSum.textContent = fmtBig(sum);
+    if(seq.length>2 && seq[seq.length-2]!==0n){
+      const phi = (Number(last)/Number(seq[seq.length-2])).toFixed(9);
+      statPhi.textContent = phi;
+      phiVal.textContent  = phi;
+      phiDesc.textContent = `True φ = 1.61803398874…`;
+    }
+  }
+}
+
+function reset(){
+  if(timer){clearInterval(timer);timer=null;}
+  grid.innerHTML='';
+  seq=[]; step=0; total=0;
+  progBar.style.width='0%';
+  counter.textContent='0 / 0';
+  statusTxt.textContent='Ready';
+  statusDot.classList.remove('pulse');
+  phiVal.textContent='1.618033…';
+  phiDesc.textContent='Generate the sequence to see φ emerge';
+  statMax.textContent='—'; statSum.textContent='—'; statPhi.textContent='—';
+  btnGo.disabled=false;
+}
+</script>
+</body>
+</html>

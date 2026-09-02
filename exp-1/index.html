@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apply Now – TechHire Careers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:ital,wght@0,300;0,500;0,700;0,800;1,300&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Tokens ─────────────────────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:        #080a10;
+  --surface:   #0f1118;
+  --card:      #12151f;
+  --border:    #1c2033;
+  --border-h:  #2d3354;
+  --accent:    #f5c842;
+  --accent2:   #5de6ff;
+  --accent3:   #b97eff;
+  --text:      #e9ecf4;
+  --muted:     #59627a;
+  --danger:    #ff4f6a;
+  --success:   #22d07a;
+  --r:         14px;
+  --r-sm:      8px;
+}
+
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Background mesh ────────────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 800px 600px at 10% 20%,  rgba(245,200,66,.07)  0%, transparent 60%),
+    radial-gradient(ellipse 600px 800px at 90% 70%,  rgba(93,230,255,.06)  0%, transparent 60%),
+    radial-gradient(ellipse 500px 500px at 50% 100%, rgba(185,126,255,.05) 0%, transparent 60%);
+  pointer-events:none; z-index:0;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(8,10,16,.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 5%;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  font-weight: 800; font-size: 1.25rem; letter-spacing:-.03em;
+  display:flex; align-items:center; gap:10px;
+}
+.logo-dot {
+  width:10px; height:10px; border-radius:50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.6} }
+.header-meta { font-size:.78rem; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative; z-index:1;
+  max-width: 860px; margin: 0 auto;
+  padding: 80px 24px 48px;
+  text-align: center;
+}
+.hero-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem; letter-spacing:.12em; text-transform:uppercase;
+  color: var(--accent2);
+  border: 1px solid rgba(93,230,255,.25);
+  padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 24px;
+  animation: fadeUp .6s ease both;
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 800; line-height: 1.1;
+  letter-spacing:-.04em;
+  animation: fadeUp .7s .1s ease both;
+}
+.hero h1 em { font-style:normal; color:var(--accent); }
+.hero p {
+  margin-top:16px; color:var(--muted);
+  font-size:1rem; line-height:1.7;
+  animation: fadeUp .7s .2s ease both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0);    }
+}
+
+/* ── Progress bar ───────────────────────────────────────────────────────── */
+.progress-wrap {
+  position:relative; z-index:1;
+  max-width: 700px; margin:0 auto 12px;
+  padding: 0 24px;
+  animation: fadeUp .7s .3s ease both;
+}
+.steps-labels {
+  display:flex; justify-content:space-between;
+  font-size:.7rem; font-family:'JetBrains Mono',monospace;
+  color:var(--muted); margin-bottom:10px;
+}
+.steps-labels span.active { color:var(--accent); }
+.progress-track {
+  height:3px; background:var(--border); border-radius:2px; overflow:hidden;
+}
+.progress-fill {
+  height:100%; width:33%;
+  background:linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius:2px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Form wrapper ───────────────────────────────────────────────────────── */
+.form-outer {
+  position:relative; z-index:1;
+  max-width:700px; margin:0 auto 80px;
+  padding:0 24px;
+}
+.form-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  animation: fadeUp .7s .35s ease both;
+}
+
+/* ── Steps ──────────────────────────────────────────────────────────────── */
+.step { display:none; }
+.step.active { display:block; animation: stepIn .35s ease both; }
+@keyframes stepIn { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
+
+.step-title {
+  font-size:1.3rem; font-weight:700; margin-bottom:6px;
+}
+.step-sub {
+  color:var(--muted); font-size:.85rem; margin-bottom:32px;
+}
+
+/* ── Field ──────────────────────────────────────────────────────────────── */
+.field { margin-bottom:22px; }
+.field label {
+  display:block; font-size:.8rem; font-weight:500;
+  letter-spacing:.04em; color:var(--muted);
+  margin-bottom:8px; text-transform:uppercase;
+}
+.field label sup { color:var(--danger); }
+.field input, .field select, .field textarea {
+  width:100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 13px 16px;
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
+  font-size: .9rem;
+  outline: none;
+  transition: border .2s, box-shadow .2s;
+  -webkit-appearance: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(245,200,66,.1);
+}
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23596279' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 16px center;
+  padding-right:40px; cursor:pointer;
+}
+.field textarea { resize:vertical; min-height:110px; line-height:1.6; }
+.field .hint { font-size:.73rem; color:var(--muted); margin-top:6px; }
+.field .err-msg { font-size:.73rem; color:var(--danger); margin-top:5px; display:none; }
+.field.has-error input, .field.has-error select, .field.has-error textarea {
+  border-color: var(--danger);
+}
+.field.has-error .err-msg { display:block; }
+
+/* Two column grid */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+/* ── Job Type cards ─────────────────────────────────────────────────────── */
+.job-types {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+}
+.job-card {
+  position:relative; cursor:pointer;
+}
+.job-card input[type=radio] { position:absolute; opacity:0; width:0; height:0; }
+.job-card .card-face {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:8px; padding:18px 12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  transition:all .2s;
+  text-align:center;
+}
+.job-card .card-face .icon { font-size:1.5rem; }
+.job-card .card-face .label { font-size:.78rem; font-weight:600; }
+.job-card .card-face .sub   { font-size:.66rem; color:var(--muted); }
+.job-card input:checked + .card-face {
+  border-color:var(--accent);
+  background:rgba(245,200,66,.07);
+  box-shadow:0 0 0 3px rgba(245,200,66,.12);
+}
+.job-card:hover .card-face { border-color:var(--border-h); }
+
+/* ── Skills checkboxes ──────────────────────────────────────────────────── */
+.skills-filter {
+  display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;
+}
+.filter-btn {
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem; padding:4px 10px;
+  border:1px solid var(--border);
+  border-radius:20px; background:transparent;
+  color:var(--muted); cursor:pointer;
+  transition:all .15s;
+}
+.filter-btn:hover, .filter-btn.active {
+  border-color:var(--accent2); color:var(--accent2);
+  background:rgba(93,230,255,.07);
+}
+.skills-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px;
+}
+.skill-item { position:relative; cursor:pointer; }
+.skill-item input[type=checkbox] { position:absolute; opacity:0; width:0; height:0; }
+.skill-item .skill-face {
+  display:flex; align-items:center; gap:8px; padding:10px 12px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-sm); font-size:.78rem; font-family:'JetBrains Mono',monospace;
+  transition:all .15s;
+  user-select:none;
+}
+.skill-item .skill-face::before {
+  content:''; width:14px; height:14px; min-width:14px;
+  border:1.5px solid var(--border-h); border-radius:3px;
+  transition:all .15s;
+}
+.skill-item input:checked + .skill-face {
+  border-color:var(--accent2);
+  background:rgba(93,230,255,.07);
+  color:var(--accent2);
+}
+.skill-item input:checked + .skill-face::before {
+  background:var(--accent2); border-color:var(--accent2);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%23080a10' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:center;
+}
+.skills-count {
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem; color:var(--muted); margin-top:10px;
+}
+.skills-count span { color:var(--accent2); }
+
+/* ── File upload ─────────────────────────────────────────────────────────── */
+.file-drop {
+  border:1.5px dashed var(--border);
+  border-radius:var(--r-sm);
+  padding:28px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+}
+.file-drop input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.file-drop:hover { border-color:var(--accent); background:rgba(245,200,66,.03); }
+.file-drop.has-file { border-color:var(--success); background:rgba(34,208,122,.04); }
+.file-drop .drop-icon { font-size:2rem; margin-bottom:8px; }
+.file-drop .drop-text { font-size:.82rem; color:var(--muted); }
+.file-drop .file-name { font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--success); margin-top:6px; display:none; }
+
+/* ── Navigation buttons ─────────────────────────────────────────────────── */
+.form-nav {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:32px; padding-top:24px;
+  border-top:1px solid var(--border);
+}
+.btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:13px 28px; border-radius:var(--r-sm);
+  font-family:'Sora',sans-serif; font-size:.9rem; font-weight:600;
+  cursor:pointer; border:none; transition:all .2s;
+}
+.btn-ghost {
+  background:transparent; color:var(--muted);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover { color:var(--text); border-color:var(--border-h); }
+.btn-primary {
+  background:var(--accent); color:#080a10;
+}
+.btn-primary:hover { background:#f5d360; transform:translateY(-1px); box-shadow:0 8px 24px rgba(245,200,66,.2); }
+.btn-primary:disabled { opacity:.5; transform:none; cursor:not-allowed; }
+.btn-success {
+  background:var(--success); color:#080a10;
+}
+.btn-success:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(34,208,122,.2); }
+
+/* ── Success screen ─────────────────────────────────────────────────────── */
+.success-screen {
+  display:none; text-align:center; padding:40px 20px;
+  animation: fadeUp .5s ease both;
+}
+.success-screen .check-ring {
+  width:80px; height:80px; border-radius:50%;
+  background:rgba(34,208,122,.12);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 24px; font-size:2.2rem;
+  border:2px solid var(--success);
+  animation:popIn .5s .1s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
+.success-screen h2 { font-size:1.8rem; font-weight:800; margin-bottom:8px; }
+.success-screen p { color:var(--muted); margin-bottom:24px; }
+.ref-badge {
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  background:rgba(93,230,255,.1);
+  border:1px solid rgba(93,230,255,.25);
+  color:var(--accent2); padding:8px 20px;
+  border-radius:8px; font-size:.9rem;
+  margin-bottom:28px; letter-spacing:.08em;
+}
+
+/* ── Toast ──────────────────────────────────────────────────────────────── */
+#toast {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(100px);
+  background:var(--danger); color:#fff;
+  padding:12px 24px; border-radius:30px;
+  font-size:.83rem; font-weight:600;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  z-index:9999; white-space:nowrap;
+}
+#toast.show { transform:translateX(-50%) translateY(0); }
+
+/* Spinner */
+.spinner {
+  display:inline-block; width:16px; height:16px;
+  border:2px solid rgba(8,10,16,.3);
+  border-top-color:#080a10;
+  border-radius:50%; animation:spin .6s linear infinite;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media(max-width:540px) {
+  .form-card { padding:24px 18px; }
+  .grid-2 { grid-template-columns:1fr; }
+  .job-types { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    TechHire
+  </div>
+  <div class="header-meta">CAREERS · APPLY NOW</div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-tag">// Open positions available</div>
+  <h1>Shape Your <em>Future</em><br>with Us</h1>
+  <p>We're hiring talented people who want to build something meaningful.<br>Fill out the form below — it takes less than 3 minutes.</p>
+</div>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="steps-labels">
+    <span class="active" id="lbl-1">01 — Personal Info</span>
+    <span id="lbl-2">02 — Skills & Role</span>
+    <span id="lbl-3">03 — Final Details</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+</div>
+
+<!-- Form -->
+<div class="form-outer">
+  <div class="form-card">
+    <form id="appForm" enctype="multipart/form-data" novalidate>
+
+      <!-- ─── STEP 1: Personal Info ─────────────────────────────────────── -->
+      <div class="step active" id="step-1">
+        <div class="step-title">Personal Information</div>
+        <div class="step-sub">Let us know who you are.</div>
+
+        <div class="field" id="f-name">
+          <label>Full Name <sup>*</sup></label>
+          <input type="text" name="full_name" placeholder="e.g. Priya Ramesh" autocomplete="name">
+          <div class="err-msg">Please enter your full name.</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field" id="f-email">
+            <label>Email Address <sup>*</sup></label>
+            <input type="email" name="email" placeholder="you@example.com" autocomplete="email">
+            <div class="err-msg">Enter a valid email.</div>
+          </div>
+          <div class="field" id="f-phone">
+            <label>Phone Number <sup>*</sup></label>
+            <input type="tel" name="phone" placeholder="+91 98765 43210" autocomplete="tel">
+            <div class="err-msg">Enter a valid phone number.</div>
+          </div>
+        </div>
+
+        <div class="field" id="f-exp">
+          <label>Years of Experience <sup>*</sup></label>
+          <select name="experience">
+            <option value="">Select range…</option>
+            <option value="0-1">0 – 1 year (Fresher)</option>
+            <option value="1-3">1 – 3 years</option>
+            <option value="3-5">3 – 5 years</option>
+            <option value="5-10">5 – 10 years</option>
+            <option value="10+">10+ years</option>
+          </select>
+          <div class="err-msg">Please select your experience level.</div>
+        </div>
+
+        <div class="form-nav">
+          <span></span>
+          <button type="button" class="btn btn-primary" onclick="nextStep(1)">
+            Next Step <span>→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ─── STEP 2: Skills & Job Type ─────────────────────────────────── -->
+      <div class="step" id="step-2">
+        <div class="step-title">Role & Skills</div>
+        <div class="step-sub">What are you applying for? What can you do?</div>
+
+        <!-- Job Type -->
+        <div class="field" id="f-jobtype">
+          <label>Job Type <sup>*</sup></label>
+          <div class="job-types">
+            <label class="job-card">
+              <input type="radio" name="job_type" value="full-time">
+              <div class="card-face"><div class="icon">🏢</div><div class="label">Full-Time</div><div class="sub">Permanent role</div></div>
+            </label>
+            <label class="job-card">
+              <input type="radio" name="job_type" value="part-time">
+              <div class="card-face"><div class="icon">⏰</div><div class="label">Part-Time</div><div class="sub">Flexible hours</div></div>
+            </label>
+            <label class="job-card">
+              <input type="radio" name="job_type" value="contract">
+              <div class="card-face"><div class="icon">📄</div><div class="label">Contract</div><div class="sub">Fixed term</div></div>
+            </label>
+            <label class="job-card">
+              <input type="radio" name="job_type" value="internship">
+              <div class="card-face"><div class="icon">🎓</div><div class="label">Internship</div><div class="sub">Learning role</div></div>
+            </label>
+            <label class="job-card">
+              <input type="radio" name="job_type" value="remote">
+              <div class="card-face"><div class="icon">🌍</div><div class="label">Remote</div><div class="sub">Work anywhere</div></div>
+            </label>
+          </div>
+          <div class="err-msg" style="margin-top:8px">Please select a job type.</div>
+        </div>
+
+        <!-- Skills -->
+        <div class="field" id="f-skills">
+          <label>Technical Skills <sup>*</sup> — pick all that apply</label>
+          <div class="skills-filter">
+            <button type="button" class="filter-btn active" data-cat="all">All</button>
+            <button type="button" class="filter-btn" data-cat="frontend">Frontend</button>
+            <button type="button" class="filter-btn" data-cat="backend">Backend</button>
+            <button type="button" class="filter-btn" data-cat="database">Database</button>
+            <button type="button" class="filter-btn" data-cat="devops">DevOps</button>
+            <button type="button" class="filter-btn" data-cat="design">Design</button>
+          </div>
+          <div class="skills-grid" id="skillsGrid">
+            <!-- Injected by JS -->
+          </div>
+          <div class="skills-count">Selected: <span id="skillsCount">0</span></div>
+          <div class="err-msg">Please select at least one skill.</div>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn btn-ghost" onclick="prevStep(2)">← Back</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next Step →</button>
+        </div>
+      </div>
+
+      <!-- ─── STEP 3: Final Details ──────────────────────────────────────── -->
+      <div class="step" id="step-3">
+        <div class="step-title">Final Details</div>
+        <div class="step-sub">Almost there! Optional but helpful.</div>
+
+        <div class="field">
+          <label>Portfolio / LinkedIn URL</label>
+          <input type="url" name="portfolio" placeholder="https://yourportfolio.com">
+          <div class="hint">Share your work, GitHub, or LinkedIn profile.</div>
+        </div>
+
+        <div class="field">
+          <label>Upload Resume</label>
+          <div class="file-drop" id="fileDrop">
+            <input type="file" name="resume" id="resumeInput" accept=".pdf,.doc,.docx">
+            <div class="drop-icon">📎</div>
+            <div class="drop-text">Drag & drop or <strong>click to browse</strong></div>
+            <div class="hint">PDF, DOC, DOCX — max 5 MB</div>
+            <div class="file-name" id="fileName"></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Cover Letter</label>
+          <textarea name="cover_letter" placeholder="Tell us why you're a great fit for this role…"></textarea>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn btn-ghost" onclick="prevStep(3)">← Back</button>
+          <button type="submit" class="btn btn-success" id="submitBtn">
+            Submit Application ✓
+          </button>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Success -->
+    <div class="success-screen" id="successScreen">
+      <div class="check-ring">✓</div>
+      <h2>Application Sent!</h2>
+      <p>Thank you for applying. We'll review your profile and get back to you within 5 business days.</p>
+      <div class="ref-badge" id="refBadge">APP-00001</div>
+      <br>
+      <button class="btn btn-primary" onclick="resetForm()">Apply for Another Role →</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">⚠ Please fix the errors above.</div>
+
+<script>
+// ── Skills data ───────────────────────────────────────────────────────────
+const SKILLS = [
+  { name:'HTML',          cat:'frontend' },
+  { name:'CSS',           cat:'frontend' },
+  { name:'JavaScript',    cat:'frontend' },
+  { name:'TypeScript',    cat:'frontend' },
+  { name:'React',         cat:'frontend' },
+  { name:'Vue',           cat:'frontend' },
+  { name:'Angular',       cat:'frontend' },
+  { name:'Node.js',       cat:'backend'  },
+  { name:'PHP',           cat:'backend'  },
+  { name:'Python',        cat:'backend'  },
+  { name:'Java',          cat:'backend'  },
+  { name:'C#',            cat:'backend'  },
+  { name:'C++',           cat:'backend'  },
+  { name:'SQL',           cat:'database' },
+  { name:'MySQL',         cat:'database' },
+  { name:'PostgreSQL',    cat:'database' },
+  { name:'MongoDB',       cat:'database' },
+  { name:'AWS',           cat:'devops'   },
+  { name:'Docker',        cat:'devops'   },
+  { name:'Git',           cat:'devops'   },
+  { name:'Figma',         cat:'design'   },
+  { name:'Photoshop',     cat:'design'   },
+  { name:'SEO',           cat:'design'   },
+  { name:'Data Analysis', cat:'backend'  },
+];
+
+let currentStep = 1;
+const totalSteps = 3;
+
+// ── Build skills grid ─────────────────────────────────────────────────────
+function buildSkills(filter = 'all') {
+  const grid = document.getElementById('skillsGrid');
+  grid.innerHTML = '';
+  SKILLS
+    .filter(s => filter === 'all' || s.cat === filter)
+    .forEach(s => {
+      const id = 'sk-' + s.name.replace(/\s+/g,'_');
+      grid.insertAdjacentHTML('beforeend', `
+        <label class="skill-item">
+          <input type="checkbox" name="skills[]" value="${s.name}" id="${id}"
+            ${[...document.querySelectorAll('input[name="skills[]"]:checked')]
+                .map(c=>c.value).includes(s.name) ? 'checked' : ''}>
+          <span class="skill-face">${s.name}</span>
+        </label>`);
+    });
+  updateSkillCount();
+}
+
+function updateSkillCount() {
+  document.getElementById('skillsCount').textContent =
+    document.querySelectorAll('input[name="skills[]"]:checked').length;
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    buildSkills(btn.dataset.cat);
+  });
+});
+document.getElementById('skillsGrid').addEventListener('change', updateSkillCount);
+buildSkills();
+
+// ── File upload display ───────────────────────────────────────────────────
+const resumeInput = document.getElementById('resumeInput');
+const fileDrop    = document.getElementById('fileDrop');
+const fileNameEl  = document.getElementById('fileName');
+resumeInput.addEventListener('change', () => {
+  if (resumeInput.files[0]) {
+    fileNameEl.textContent = '📄 ' + resumeInput.files[0].name;
+    fileNameEl.style.display = 'block';
+    fileDrop.classList.add('has-file');
+  }
+});
+
+// ── Progress ──────────────────────────────────────────────────────────────
+function updateProgress(step) {
+  const pct = ((step - 1) / (totalSteps - 1)) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.querySelectorAll('.steps-labels span').forEach((el,i) => {
+    el.classList.toggle('active', i+1 === step);
+  });
+}
+
+// ── Validation ────────────────────────────────────────────────────────────
+function setError(fieldId, hasError) {
+  const el = document.getElementById(fieldId);
+  if (el) el.classList.toggle('has-error', hasError);
+  return hasError;
+}
+function validateStep(step) {
+  let ok = true;
+  if (step === 1) {
+    const name  = document.querySelector('[name=full_name]').value.trim();
+    const email = document.querySelector('[name=email]').value.trim();
+    const phone = document.querySelector('[name=phone]').value.trim();
+    const exp   = document.querySelector('[name=experience]').value;
+    if (setError('f-name',  !name))                           ok = false;
+    if (setError('f-email', !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) ok = false;
+    if (setError('f-phone', !phone))                          ok = false;
+    if (setError('f-exp',   !exp))                            ok = false;
+  } else if (step === 2) {
+    const jt = document.querySelector('[name=job_type]:checked');
+    const sk = document.querySelectorAll('[name="skills[]"]:checked');
+    if (setError('f-jobtype', !jt)) ok = false;
+    if (setError('f-skills',  sk.length === 0)) ok = false;
+  }
+  return ok;
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────
+function nextStep(from) {
+  if (!validateStep(from)) { showToast('Please fix the highlighted fields.'); return; }
+  document.getElementById('step-' + from).classList.remove('active');
+  currentStep = from + 1;
+  document.getElementById('step-' + currentStep).classList.add('active');
+  updateProgress(currentStep);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function prevStep(from) {
+  document.getElementById('step-' + from).classList.remove('active');
+  currentStep = from - 1;
+  document.getElementById('step-' + currentStep).classList.add('active');
+  updateProgress(currentStep);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Submit ────────────────────────────────────────────────────────────────
+document.getElementById('appForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Submitting…';
+
+  const formData = new FormData(e.target);
+
+  try {
+    const res  = await fetch('submit.php', { method:'POST', body: formData });
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById('appForm').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+      document.getElementById('refBadge').textContent = data.reference;
+    } else {
+      const msgs = data.errors || [data.message];
+      showToast(msgs[0]);
+      btn.disabled = false;
+      btn.innerHTML = 'Submit Application ✓';
+    }
+  } catch {
+    showToast('Network error — please try again.');
+    btn.disabled = false;
+    btn.innerHTML = 'Submit Application ✓';
+  }
+});
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '⚠ ' + msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── Reset ─────────────────────────────────────────────────────────────────
+function resetForm() {
+  document.getElementById('appForm').reset();
+  document.getElementById('appForm').style.display = 'block';
+  document.getElementById('successScreen').style.display = 'none';
+  currentStep = 1;
+  document.querySelectorAll('.step').forEach((s,i)=>s.classList.toggle('active',i===0));
+  updateProgress(1);
+  buildSkills();
+  fileDrop.classList.remove('has-file');
+  fileNameEl.style.display = 'none';
+}
+
+updateProgress(1);
+</script>
+</body>
+</html>
